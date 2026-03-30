@@ -105,7 +105,15 @@ app.post('/api/applications', (req, res) => {
     INSERT INTO AdoptionApplications
       (user_id, pet_id, status, submitted_at, housing_type, has_yard, household_size, has_other_pets, experience_with_pets, notes)
     VALUES (?, ?, ?, datetime('now'), ?, ?, ?, ?, ?, ?)
-  `).run(user_id, pet_id, status, housing_type, has_yard, household_size, has_other_pets, experience_with_pets, notes);
+  `).run(
+    user_id, pet_id, status,
+    housing_type ?? null,
+    has_yard,
+    household_size ?? null,
+    has_other_pets,
+    experience_with_pets ?? null,
+    notes ?? null
+  );
   res.status(201).json({ application_id: result.lastInsertRowid });
 });
 
