@@ -1,9 +1,14 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { pets } from '../data/pets';
+import { fetchPets } from '../api';
 import PetCard from '../components/PetCard';
 
 function Home() {
-  const featuredPets = pets.slice(0, 3);
+  const [featuredPets, setFeaturedPets] = useState([]);
+
+  useEffect(() => {
+    fetchPets().then((pets) => setFeaturedPets(pets.filter((p) => p.featured).slice(0, 3)));
+  }, []);
 
   return (
     <div className="container page-content">

@@ -1,60 +1,62 @@
-import { useEffect, useMemo, useState } from 'react';
-import { conversations as initialConversations } from '../data/messages';
+import { useEffect, useState } from 'react';
+import { fetchConversations, fetchMessages, postMessage } from '../api';
 import ChatWindow from '../components/ChatWindow';
 
 function Messages() {
-  const [conversations, setConversations] = useState(initialConversations);
-  const [selectedId, setSelectedId] = useState(initialConversations[0]?.id ?? null);
+  const [conversations, setConversations] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
   const [draftMessage, setDraftMessage] = useState('');
 
-  const selectedConversation = useMemo(
-    () => conversations.find((conversation) => conversation.id === selectedId),
-    [conversations, selectedId]
-  );
+  useEffect(() => {
+    fetchConversations().then((data) => {
+      setConversations(data);
+      if (data.length > 0) setSelectedId(data[0].id);
+    });
+  }, []);
 
-  const handleSend = () => {
+  useEffect(() => {
+    if (selectedId === null) return;
+    fetchMessages(selectedId).then((messages) => {
+      setConversations((prev) =>
+        prev.map((c) => (c.id === selectedId ? { ...c, messages } : c))
+      );
+    });
+  }, [selectedId]);
+
+  const selectedConversation = conversations.find((c) => c.id === selectedId) ?? null;
+
+  const handleSend = async () => {
     const content = draftMessage.trim();
     if (!content || !selectedConversation) return;
 
+    const newMsg = { id: Date.now(), sender: 'user', text: content };
     setConversations((prev) =>
-      prev.map((conversation) => {
-        if (conversation.id !== selectedId) return conversation;
-        return {
-          ...conversation,
-          messages: [...conversation.messages, { id: Date.now(), sender: 'user', text: content }],
-        };
-      })
+      prev.map((c) =>
+        c.id === selectedId ? { ...c, messages: [...c.messages, newMsg] } : c
+      )
     );
     setDraftMessage('');
-  };
 
-  useEffect(() => {
-    if (!selectedConversation) return;
+    await postMessage({
+      conversation_id: selectedId,
+      sender_type: 'user',
+      sender_id: 1,
+      message_text: content,
+    });
 
-    const lastMessage = selectedConversation.messages[selectedConversation.messages.length - 1];
-    if (!lastMessage || lastMessage.sender !== 'user') return;
-
-    const timeoutId = setTimeout(() => {
+    setTimeout(() => {
+      const autoReply = {
+        id: Date.now() + 1,
+        sender: 'staff',
+        text: 'Thanks for your message. A shelter team member will follow up soon.',
+      };
       setConversations((prev) =>
-        prev.map((conversation) => {
-          if (conversation.id !== selectedId) return conversation;
-          return {
-            ...conversation,
-            messages: [
-              ...conversation.messages,
-              {
-                id: Date.now() + 1,
-                sender: 'staff',
-                text: 'Thanks for your message. A shelter team member will follow up soon.',
-              },
-            ],
-          };
-        })
+        prev.map((c) =>
+          c.id === selectedId ? { ...c, messages: [...c.messages, autoReply] } : c
+        )
       );
     }, 900);
-
-    return () => clearTimeout(timeoutId);
-  }, [conversations, selectedConversation, selectedId]);
+  };
 
   return (
     <div className="container page-content">

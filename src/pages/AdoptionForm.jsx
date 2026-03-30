@@ -1,14 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { pets } from '../data/pets';
+import { fetchPet, postApplication } from '../api';
 import ProgressBar from '../components/ProgressBar';
 
 const totalSteps = 3;
 
 function AdoptionForm() {
   const { id } = useParams();
-  const pet = useMemo(() => pets.find((item) => item.id === id), [id]);
-
+  const [pet, setPet] = useState(null);
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
@@ -21,14 +20,9 @@ function AdoptionForm() {
     agreement: false,
   });
 
-  if (!pet) {
-    return (
-      <div className="container page-content empty-state">
-        <h2>Pet not found</h2>
-        <Link to="/pets" className="button primary-button">Back to Browse Pets</Link>
-      </div>
-    );
-  }
+  useEffect(() => {
+    fetchPet(id).then(setPet);
+  }, [id]);
 
   const validateStep = () => {
     const nextErrors = {};
@@ -65,10 +59,29 @@ function AdoptionForm() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateStep()) setSubmitted(true);
+    if (!validateStep()) return;
+
+    await postApplication({
+      user_id: 1,
+      pet_id: Number(id),
+      status: 'submitted',
+      housing_type: formData.housingType,
+      notes: `Activity level: ${formData.activityLevel}. Reason: ${formData.reason}`,
+    });
+
+    setSubmitted(true);
   };
+
+  if (!pet) {
+    return (
+      <div className="container page-content empty-state">
+        <h2>Pet not found</h2>
+        <Link to="/pets" className="button primary-button">Back to Browse Pets</Link>
+      </div>
+    );
+  }
 
   if (submitted) {
     return (
@@ -77,7 +90,7 @@ function AdoptionForm() {
           <p className="eyebrow">Following instructions</p>
           <h2>Application submitted</h2>
           <p>
-            Thank you, {formData.fullName}. Your application for {pet.name} has been recorded in this prototype.
+            Thank you, {formData.fullName}. Your application for {pet.name} has been saved.
           </p>
           <Link to="/messages" className="button primary-button">Go to Messages</Link>
         </section>

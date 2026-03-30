@@ -1,13 +1,25 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { pets } from '../data/pets';
+import { fetchPet } from '../api';
 import ProfileTabs from '../components/ProfileTabs';
 
 function PetProfile() {
   const { id } = useParams();
+  const [pet, setPet] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('about');
 
-  const pet = useMemo(() => pets.find((item) => item.id === id), [id]);
+  useEffect(() => {
+    setLoading(true);
+    fetchPet(id).then((data) => {
+      setPet(data);
+      setLoading(false);
+    });
+  }, [id]);
+
+  if (loading) {
+    return <div className="container page-content"><p>Loading...</p></div>;
+  }
 
   if (!pet) {
     return (
@@ -28,7 +40,6 @@ function PetProfile() {
           <h2>{pet.name}</h2>
           <p>{pet.species} • {pet.breed}</p>
           <p>{pet.age} • {pet.gender} • {pet.size}</p>
-          <p className="muted-text">Location: {pet.location}</p>
           <span className={`status-badge ${pet.status.toLowerCase()}`}>{pet.status}</span>
 
           <div className="profile-actions">

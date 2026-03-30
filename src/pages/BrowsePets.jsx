@@ -1,13 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { fetchPets } from '../api';
 import PetCard from '../components/PetCard';
 import SearchBar from '../components/SearchBar';
 import FilterPanel from '../components/FilterPanel';
-import { pets } from '../data/pets';
 
 function BrowsePets() {
+  const [pets, setPets] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({ species: 'All', status: 'All', size: 'All' });
   const [sortValue, setSortValue] = useState('name');
+
+  useEffect(() => {
+    fetchPets().then(setPets);
+  }, []);
 
   const filteredPets = useMemo(() => {
     const search = searchTerm.trim().toLowerCase();
@@ -26,7 +31,7 @@ function BrowsePets() {
     });
 
     return result.sort((a, b) => a[sortValue].localeCompare(b[sortValue]));
-  }, [searchTerm, filters, sortValue]);
+  }, [pets, searchTerm, filters, sortValue]);
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
