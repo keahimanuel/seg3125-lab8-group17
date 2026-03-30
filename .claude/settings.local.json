@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(npm install:*)",
-      "Bash(curl -s http://localhost:3001/api/conversations)",
-      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(c[''''conversation_id''''], c[''''topic''''], c.get\\(''''staff_name''''\\)\\) for c in d]\")"
-    ]
-  }
-}
