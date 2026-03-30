@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchPet } from '../api';
+import { useT } from '../i18n/LanguageContext';
 import ProfileTabs from '../components/ProfileTabs';
 
 function PetProfile() {
@@ -8,6 +9,7 @@ function PetProfile() {
   const [pet, setPet] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('about');
+  const t = useT();
 
   useEffect(() => {
     setLoading(true);
@@ -18,14 +20,14 @@ function PetProfile() {
   }, [id]);
 
   if (loading) {
-    return <div className="container page-content"><p>Loading...</p></div>;
+    return <div className="container page-content"><p>{t('profile.loading')}</p></div>;
   }
 
   if (!pet) {
     return (
       <div className="container page-content empty-state">
-        <h2>Pet not found</h2>
-        <Link to="/pets" className="button primary-button">Back to Browse Pets</Link>
+        <h2>{t('profile.notFound')}</h2>
+        <Link to="/pets" className="button primary-button">{t('profile.back')}</Link>
       </div>
     );
   }
@@ -36,15 +38,15 @@ function PetProfile() {
         <img src={pet.image} alt={pet.name} className="profile-image" />
 
         <div className="profile-summary card">
-          <p className="eyebrow">Absorbing information</p>
+          <p className="eyebrow">{t('profile.eyebrow')}</p>
           <h2>{pet.name}</h2>
           <p>{pet.species} • {pet.breed}</p>
           <p>{pet.age} • {pet.gender} • {pet.size}</p>
           <span className={`status-badge ${pet.status.toLowerCase()}`}>{pet.status}</span>
 
           <div className="profile-actions">
-            <Link to={`/apply/${pet.id}`} className="button primary-button">Start Adoption</Link>
-            <Link to="/messages" className="button secondary-button">Ask a Question</Link>
+            <Link to={`/apply/${pet.id}`} className="button primary-button">{t('profile.adoption')}</Link>
+            <Link to="/messages" className="button secondary-button">{t('profile.question')}</Link>
           </div>
         </div>
       </section>

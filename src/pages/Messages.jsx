@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { fetchConversations, fetchMessages, postMessage } from '../api';
+import { useT } from '../i18n/LanguageContext';
 import ChatWindow from '../components/ChatWindow';
 
 function Messages() {
   const [conversations, setConversations] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [draftMessage, setDraftMessage] = useState('');
+  const t = useT();
 
   useEffect(() => {
     fetchConversations().then((data) => {
@@ -48,7 +50,7 @@ function Messages() {
       const autoReply = {
         id: Date.now() + 1,
         sender: 'staff',
-        text: 'Thanks for your message. A shelter team member will follow up soon.',
+        text: t('messages.autoReply'),
       };
       setConversations((prev) =>
         prev.map((c) =>
@@ -61,9 +63,9 @@ function Messages() {
   return (
     <div className="container page-content">
       <section className="page-header-block">
-        <p className="eyebrow">Communicating</p>
-        <h2>Messages</h2>
-        <p>Ask questions and keep your conversation with the shelter team in one place.</p>
+        <p className="eyebrow">{t('messages.eyebrow')}</p>
+        <h2>{t('messages.heading')}</h2>
+        <p>{t('messages.description')}</p>
       </section>
 
       <section className="messages-layout">

@@ -1,16 +1,13 @@
+import { useT } from '../i18n/LanguageContext';
+
 function ProfileTabs({ activeTab, setActiveTab, pet }) {
+  const t = useT();
   return (
     <div>
       <div className="tab-buttons">
-        <button className={activeTab === 'about' ? 'tab-button active' : 'tab-button'} onClick={() => setActiveTab('about')}>
-          About
-        </button>
-        <button className={activeTab === 'medical' ? 'tab-button active' : 'tab-button'} onClick={() => setActiveTab('medical')}>
-          Medical History
-        </button>
-        <button className={activeTab === 'care' ? 'tab-button active' : 'tab-button'} onClick={() => setActiveTab('care')}>
-          Care Guide
-        </button>
+        <button className={activeTab === 'about'   ? 'tab-button active' : 'tab-button'} onClick={() => setActiveTab('about')}>{t('tabs.about')}</button>
+        <button className={activeTab === 'medical' ? 'tab-button active' : 'tab-button'} onClick={() => setActiveTab('medical')}>{t('tabs.medical')}</button>
+        <button className={activeTab === 'care'    ? 'tab-button active' : 'tab-button'} onClick={() => setActiveTab('care')}>{t('tabs.care')}</button>
       </div>
 
       <div className="tab-panel">
@@ -24,9 +21,8 @@ function ProfileTabs({ activeTab, setActiveTab, pet }) {
             </div>
           </div>
         )}
-
         {activeTab === 'medical' && <p>{pet.medicalHistory}</p>}
-        {activeTab === 'care' && <p>{pet.careGuide}</p>}
+        {activeTab === 'care'    && <p>{pet.careGuide}</p>}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchPet, postApplication } from '../api';
+import { useT } from '../i18n/LanguageContext';
 import ProgressBar from '../components/ProgressBar';
 
 const totalSteps = 3;
@@ -19,6 +20,7 @@ function AdoptionForm() {
     reason: '',
     agreement: false,
   });
+  const t = useT();
 
   useEffect(() => {
     fetchPet(id).then(setPet);
@@ -28,18 +30,18 @@ function AdoptionForm() {
     const nextErrors = {};
 
     if (step === 1) {
-      if (!formData.fullName.trim()) nextErrors.fullName = 'Full name is required.';
-      if (!formData.email.trim()) nextErrors.email = 'Email is required.';
+      if (!formData.fullName.trim()) nextErrors.fullName = t('form.err.fullName');
+      if (!formData.email.trim())    nextErrors.email    = t('form.err.email');
     }
 
     if (step === 2) {
-      if (!formData.housingType.trim()) nextErrors.housingType = 'Housing type is required.';
-      if (!formData.activityLevel.trim()) nextErrors.activityLevel = 'Activity level is required.';
+      if (!formData.housingType.trim())  nextErrors.housingType  = t('form.err.housingType');
+      if (!formData.activityLevel.trim()) nextErrors.activityLevel = t('form.err.activity');
     }
 
     if (step === 3) {
-      if (!formData.reason.trim()) nextErrors.reason = 'Please explain why you want to adopt this pet.';
-      if (!formData.agreement) nextErrors.agreement = 'You must confirm before submitting.';
+      if (!formData.reason.trim())  nextErrors.reason    = t('form.err.reason');
+      if (!formData.agreement)      nextErrors.agreement = t('form.err.agreement');
     }
 
     setErrors(nextErrors);
@@ -77,8 +79,8 @@ function AdoptionForm() {
   if (!pet) {
     return (
       <div className="container page-content empty-state">
-        <h2>Pet not found</h2>
-        <Link to="/pets" className="button primary-button">Back to Browse Pets</Link>
+        <h2>{t('profile.notFound')}</h2>
+        <Link to="/pets" className="button primary-button">{t('profile.back')}</Link>
       </div>
     );
   }
@@ -87,12 +89,10 @@ function AdoptionForm() {
     return (
       <div className="container page-content">
         <section className="card success-box">
-          <p className="eyebrow">Following instructions</p>
-          <h2>Application submitted</h2>
-          <p>
-            Thank you, {formData.fullName}. Your application for {pet.name} has been saved.
-          </p>
-          <Link to="/messages" className="button primary-button">Go to Messages</Link>
+          <p className="eyebrow">{t('form.success.eyebrow')}</p>
+          <h2>{t('form.success.heading')}</h2>
+          <p>{t('form.success.body', { name: formData.fullName, pet: pet.name })}</p>
+          <Link to="/messages" className="button primary-button">{t('form.success.messages')}</Link>
         </section>
       </div>
     );
@@ -101,9 +101,9 @@ function AdoptionForm() {
   return (
     <div className="container page-content">
       <section className="page-header-block">
-        <p className="eyebrow">Following instructions</p>
-        <h2>Adoption Application for {pet.name}</h2>
-        <p>Complete the guided form step by step. Required fields are validated before you move on.</p>
+        <p className="eyebrow">{t('form.eyebrow')}</p>
+        <h2>{t('form.heading', { name: pet.name })}</h2>
+        <p>{t('form.description')}</p>
       </section>
 
       <section className="card form-card">
@@ -113,7 +113,7 @@ function AdoptionForm() {
           {step === 1 && (
             <div className="form-step">
               <label>
-                Full Name
+                {t('form.fullName')}
                 <input
                   type="text"
                   value={formData.fullName}
@@ -123,7 +123,7 @@ function AdoptionForm() {
               </label>
 
               <label>
-                Email
+                {t('form.email')}
                 <input
                   type="email"
                   value={formData.email}
@@ -137,29 +137,29 @@ function AdoptionForm() {
           {step === 2 && (
             <div className="form-step">
               <label>
-                Housing Type
+                {t('form.housingType')}
                 <select
                   value={formData.housingType}
                   onChange={(e) => handleChange('housingType', e.target.value)}
                 >
-                  <option value="">Select one</option>
-                  <option value="Apartment">Apartment</option>
-                  <option value="House">House</option>
-                  <option value="Condo">Condo</option>
+                  <option value="">{t('form.selectOne')}</option>
+                  <option value="Apartment">{t('form.apartment')}</option>
+                  <option value="House">{t('form.house')}</option>
+                  <option value="Condo">{t('form.condo')}</option>
                 </select>
                 {errors.housingType && <span className="error-text">{errors.housingType}</span>}
               </label>
 
               <label>
-                Activity Level
+                {t('form.activityLevel')}
                 <select
                   value={formData.activityLevel}
                   onChange={(e) => handleChange('activityLevel', e.target.value)}
                 >
-                  <option value="">Select one</option>
-                  <option value="Low">Low</option>
-                  <option value="Moderate">Moderate</option>
-                  <option value="High">High</option>
+                  <option value="">{t('form.selectOne')}</option>
+                  <option value="Low">{t('form.low')}</option>
+                  <option value="Moderate">{t('form.moderate')}</option>
+                  <option value="High">{t('form.high')}</option>
                 </select>
                 {errors.activityLevel && <span className="error-text">{errors.activityLevel}</span>}
               </label>
@@ -169,7 +169,7 @@ function AdoptionForm() {
           {step === 3 && (
             <div className="form-step">
               <label>
-                Why are you interested in this pet?
+                {t('form.reason')}
                 <textarea
                   rows="5"
                   value={formData.reason}
@@ -184,7 +184,7 @@ function AdoptionForm() {
                   checked={formData.agreement}
                   onChange={(e) => handleChange('agreement', e.target.checked)}
                 />
-                <span>I confirm the information above is accurate.</span>
+                <span>{t('form.agreement')}</span>
               </label>
               {errors.agreement && <span className="error-text">{errors.agreement}</span>}
             </div>
@@ -193,17 +193,17 @@ function AdoptionForm() {
           <div className="form-actions">
             {step > 1 && (
               <button type="button" className="button secondary-button" onClick={handleBack}>
-                Back
+                {t('form.back')}
               </button>
             )}
 
             {step < totalSteps ? (
               <button type="button" className="button primary-button" onClick={handleNext}>
-                Next
+                {t('form.next')}
               </button>
             ) : (
               <button type="submit" className="button primary-button">
-                Submit Application
+                {t('form.submit')}
               </button>
             )}
           </div>

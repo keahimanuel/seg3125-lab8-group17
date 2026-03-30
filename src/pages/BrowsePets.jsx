@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fetchPets } from '../api';
+import { useT } from '../i18n/LanguageContext';
 import PetCard from '../components/PetCard';
 import SearchBar from '../components/SearchBar';
 import FilterPanel from '../components/FilterPanel';
@@ -9,6 +10,7 @@ function BrowsePets() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({ species: 'All', status: 'All', size: 'All' });
   const [sortValue, setSortValue] = useState('name');
+  const t = useT();
 
   useEffect(() => {
     fetchPets().then(setPets);
@@ -40,9 +42,9 @@ function BrowsePets() {
   return (
     <div className="container page-content">
       <section className="page-header-block">
-        <p className="eyebrow">Exploring</p>
-        <h2>Browse Adoptable Pets</h2>
-        <p>Search, filter, and compare pets to find a good match for your home and lifestyle.</p>
+        <p className="eyebrow">{t('browse.eyebrow')}</p>
+        <h2>{t('browse.heading')}</h2>
+        <p>{t('browse.description')}</p>
       </section>
 
       <SearchBar value={searchTerm} onChange={setSearchTerm} />
@@ -55,8 +57,8 @@ function BrowsePets() {
 
       {filteredPets.length === 0 ? (
         <div className="empty-state">
-          <h3>No pets match your filters</h3>
-          <p>Try changing the search term or selecting broader filter options.</p>
+          <h3>{t('browse.empty.heading')}</h3>
+          <p>{t('browse.empty.body')}</p>
         </div>
       ) : (
         <div className="pet-grid">

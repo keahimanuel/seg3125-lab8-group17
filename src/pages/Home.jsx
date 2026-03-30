@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchPets } from '../api';
+import { useT } from '../i18n/LanguageContext';
 import PetCard from '../components/PetCard';
 
 function Home() {
   const [featuredPets, setFeaturedPets] = useState([]);
+  const t = useT();
 
   useEffect(() => {
     fetchPets().then((pets) => setFeaturedPets(pets.filter((p) => p.featured).slice(0, 3)));
@@ -14,15 +16,12 @@ function Home() {
     <div className="container page-content">
       <section className="hero-section">
         <div>
-          <p className="eyebrow">Adopt with confidence</p>
-          <h2>Helping pets find safe, loving homes.</h2>
-          <p>
-            Browse adoptable pets, learn about their needs, and submit an application through a clear,
-            guided experience.
-          </p>
+          <p className="eyebrow">{t('home.eyebrow')}</p>
+          <h2>{t('home.heading')}</h2>
+          <p>{t('home.description')}</p>
           <div className="hero-actions">
-            <Link to="/pets" className="button primary-button">Browse Pets</Link>
-            <Link to="/faq" className="button secondary-button">Learn More</Link>
+            <Link to="/pets" className="button primary-button">{t('home.cta.browse')}</Link>
+            <Link to="/faq" className="button secondary-button">{t('home.cta.learn')}</Link>
           </div>
         </div>
         <img
@@ -35,10 +34,10 @@ function Home() {
       <section>
         <div className="section-heading">
           <div>
-            <p className="eyebrow">Featured pets</p>
-            <h2>Meet pets ready for adoption</h2>
+            <p className="eyebrow">{t('home.featured.eyebrow')}</p>
+            <h2>{t('home.featured.heading')}</h2>
           </div>
-          <Link to="/pets" className="text-link">See all pets</Link>
+          <Link to="/pets" className="text-link">{t('home.featured.seeAll')}</Link>
         </div>
 
         <div className="pet-grid">

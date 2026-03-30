@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { useT } from '../i18n/LanguageContext';
 
 function PetCard({ pet }) {
+  const t = useT();
   return (
     <article className="pet-card">
       <img src={pet.image} alt={pet.name} className="pet-card-image" />
@@ -13,8 +15,8 @@ function PetCard({ pet }) {
         <p>{pet.age} • {pet.gender} • {pet.size}</p>
         <p className="muted-text">{pet.location}</p>
         <div className="pet-card-actions">
-          <Link to={`/pets/${pet.id}`} className="button secondary-button">View Profile</Link>
-          <Link to={`/apply/${pet.id}`} className="button primary-button">Apply</Link>
+          <Link to={`/pets/${pet.id}`} className="button secondary-button">{t('petCard.viewProfile')}</Link>
+          <Link to={`/apply/${pet.id}`} className="button primary-button">{t('petCard.apply')}</Link>
         </div>
       </div>
     </article>

@@ -1,9 +1,12 @@
+import { useT } from '../i18n/LanguageContext';
+
 function SearchBar({ value, onChange }) {
+  const t = useT();
   return (
     <input
       className="search-input"
       type="text"
-      placeholder="Search by name, species, or breed"
+      placeholder={t('search.placeholder')}
       value={value}
       onChange={(e) => onChange(e.target.value)}
     />

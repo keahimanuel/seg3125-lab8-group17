@@ -1,9 +1,13 @@
+import { useT } from '../i18n/LanguageContext';
+
 function ChatWindow({ conversation, draftMessage, setDraftMessage, onSend }) {
+  const t = useT();
+
   if (!conversation) {
     return (
       <section className="chat-window empty-state">
-        <h3>Select a conversation</h3>
-        <p>Choose a message thread to start communicating with the shelter team.</p>
+        <h3>{t('messages.empty.heading')}</h3>
+        <p>{t('messages.empty.description')}</p>
       </section>
     );
   }
@@ -31,9 +35,9 @@ function ChatWindow({ conversation, draftMessage, setDraftMessage, onSend }) {
           type="text"
           value={draftMessage}
           onChange={(e) => setDraftMessage(e.target.value)}
-          placeholder="Type your message"
+          placeholder={t('messages.placeholder')}
         />
-        <button className="button primary-button" onClick={onSend}>Send</button>
+        <button className="button primary-button" onClick={onSend}>{t('messages.send')}</button>
       </div>
     </section>
   );

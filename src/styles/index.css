@@ -116,6 +116,23 @@ a {
   background: #e9e0d2;
 }
 
+.lang-toggle {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1.5px solid #6b4f2e;
+  background: transparent;
+  color: #6b4f2e;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.lang-toggle:hover {
+  background: #6b4f2e;
+  color: #fff;
+}
+
 .hero-section {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
